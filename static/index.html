@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Tools</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%232f6fed'/%3E%3Cpath d='M14 5H9a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V8z' fill='none' stroke='white' stroke-width='1.8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="#compress">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
+      </span>
+      PDF Tools
+    </a>
+    <nav class="nav" aria-label="Tools">
+      <a href="#compress" data-tab="compress">
+        <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6"/><path d="M20 10h-6V4"/><path d="m14 10 7-7"/><path d="m3 21 7-7"/></svg>
+        Compress PDF
+      </a>
+      <a href="#maker" data-tab="maker">
+        <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+        Image to PDF
+      </a>
+      <a href="#merge" data-tab="merge">
+        <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h10a2 2 0 0 1 2 2v12"/><rect x="4" y="10" width="12" height="11" rx="2"/><path d="M12 2h8"/></svg>
+        Merge PDF
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ============ Compress ============ -->
+  <section class="panel" data-panel="compress">
+    <h1>Compress PDF</h1>
+    <p class="sub">Shrink PDFs without touching text or layout. Text stays vector; only images, fonts, and metadata are optimized.</p>
+
+    <div class="card">
+      <div class="drop" id="cDrop" tabindex="0" role="button" aria-label="Choose a PDF file">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 17v-6"/><path d="m9 14 3-3 3 3"/></svg>
+        <strong>Drop a PDF here</strong>
+        <span>or click to browse · up to 200 MB</span>
+        <div class="file-name" id="cFileName"></div>
+      </div>
+      <input type="file" id="cInput" accept="application/pdf,.pdf">
+
+      <div class="label">Compression level</div>
+      <div class="levels" role="radiogroup">
+        <label><input type="radio" name="level" value="low"><b>Low</b><small>Best quality</small></label>
+        <label><input type="radio" name="level" value="balanced" checked><b>Balanced</b><small>~50% smaller</small></label>
+        <label><input type="radio" name="level" value="high"><b>High</b><small>~75% smaller</small></label>
+        <label><input type="radio" name="level" value="target"><b>Target size</b><small>Fit under a size</small></label>
+      </div>
+      <div class="target" id="cTargetRow">
+        <label for="cTargetMb">Make it at most</label>
+        <input type="number" id="cTargetMb" min="0.1" step="0.5" value="5"> MB
+      </div>
+
+      <button class="btn block" id="cBtn" disabled>Compress PDF</button>
+      <div class="error" id="cError" role="alert" hidden></div>
+
+      <div class="results" id="cResults" aria-live="polite" hidden>
+        <div class="stats">
+          <div class="stat"><div class="k">Original</div><div class="v" id="cOrig">–</div></div>
+          <div class="stat"><div class="k">Compressed</div><div class="v" id="cComp">–</div></div>
+          <div class="stat hl"><div class="k">Saved</div><div class="v" id="cSaved">–</div></div>
+        </div>
+        <div class="bar"><div id="cBar"></div></div>
+        <div class="note" id="cNote"></div>
+        <div class="btn-row">
+          <button class="btn outline" id="cView">View</button>
+          <button class="btn" id="cDownload">Download</button>
+        </div>
+        <button class="btn ghost block" style="margin-top:8px" id="cReset">Compress another file</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Image to PDF ============ -->
+  <section class="panel wide" data-panel="maker" hidden>
+    <h1>Image to PDF</h1>
+    <p class="sub">Turn photos or scans into one PDF. Drag to reorder, click a page to preview.</p>
+
+    <div class="card">
+      <div class="drop" id="mDrop" tabindex="0" role="button" aria-label="Add images">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+        <strong>Drop images here</strong>
+        <span>or click to browse · JPG, PNG, WEBP, GIF, BMP, TIFF · up to 100 images</span>
+      </div>
+      <input type="file" id="mInput" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/tiff,.jpg,.jpeg,.png,.webp,.gif,.bmp,.tif,.tiff" multiple>
+
+      <div id="mWork" hidden>
+        <div class="toolbar">
+          <span class="count" id="mCount"></span>
+          <button class="btn outline small" id="mSortName">Sort by name</button>
+          <button class="btn outline small" id="mAddMore">+ Add more</button>
+          <button class="btn ghost small" id="mClear">Clear all</button>
+        </div>
+        <div class="grid" id="mGrid"></div>
+
+        <div class="options">
+          <label>Page size
+            <select id="mPageSize">
+              <option value="a4" selected>A4</option>
+              <option value="letter">Letter</option>
+              <option value="legal">Legal</option>
+              <option value="fit">Fit to image</option>
+            </select>
+          </label>
+          <label>Orientation
+            <select id="mOrientation">
+              <option value="auto" selected>Auto</option>
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </label>
+          <label>Margin
+            <select id="mMargin">
+              <option value="none" selected>No margin</option>
+              <option value="small">Small</option>
+              <option value="normal">Normal</option>
+            </select>
+          </label>
+          <label>File name
+            <input type="text" id="mName" value="images" spellcheck="false">
+          </label>
+        </div>
+
+        <button class="btn block" id="mBtn">Create PDF</button>
+      </div>
+      <div class="error" id="mError" role="alert" hidden></div>
+      <div id="mResult" hidden></div>
+    </div>
+  </section>
+
+  <!-- ============ Merge ============ -->
+  <section class="panel wide" data-panel="merge" hidden>
+    <h1>Merge PDF</h1>
+    <p class="sub">Combine up to 10 PDFs into one. Drag to set the order, click a file to preview it.</p>
+
+    <div class="card">
+      <div class="drop" id="gDrop" tabindex="0" role="button" aria-label="Add PDF files">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h10a2 2 0 0 1 2 2v12"/><rect x="4" y="10" width="12" height="11" rx="2"/><path d="M12 2h8"/></svg>
+        <strong>Drop PDFs here</strong>
+        <span>or click to browse · up to 10 files</span>
+      </div>
+      <input type="file" id="gInput" accept="application/pdf,.pdf" multiple>
+
+      <div id="gWork" hidden>
+        <div class="toolbar">
+          <span class="count" id="gCount"></span>
+          <button class="btn outline small" id="gSortName">Sort by name</button>
+          <button class="btn outline small" id="gAddMore">+ Add more</button>
+          <button class="btn ghost small" id="gClear">Clear all</button>
+        </div>
+        <div class="grid" id="gGrid"></div>
+
+        <div class="options">
+          <label class="span-2">File name
+            <input type="text" id="gName" value="merged" spellcheck="false">
+          </label>
+        </div>
+
+        <button class="btn block" id="gBtn">Merge PDFs</button>
+      </div>
+      <div class="error" id="gError" role="alert" hidden></div>
+      <div id="gResult" hidden></div>
+    </div>
+  </section>
+</main>
+
+<footer>Files are processed on this machine and never stored.</footer>
+
+<dialog class="viewer" id="viewer" aria-label="Preview">
+  <div class="viewer-head">
+    <div class="viewer-title" id="vTitle"></div>
+    <button class="icon-btn" id="vClose" aria-label="Close preview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="viewer-body" id="vBody"></div>
+  <div class="viewer-foot" id="vFoot">
+    <button class="icon-btn" id="vPrev" aria-label="Previous">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <span class="viewer-counter" id="vCounter"></span>
+    <button class="icon-btn" id="vNext" aria-label="Next">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>
+</dialog>
+
+<script src="js/common.js"></script>
+<script src="js/compress.js"></script>
+<script src="js/maker.js"></script>
+<script src="js/merge.js"></script>
+</body>
+</html>
